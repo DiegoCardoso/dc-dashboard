@@ -49,10 +49,10 @@ class DcDashboard extends VaadinElement {
         this.style.setProperty(DcDashboard.COLUMN_CSS_ATTRIBUTE, `${this.columns}`);
       } else {
         this.style.removeProperty(DcDashboard.COLUMN_CSS_ATTRIBUTE);
-        this.cleanStyleAttribute();
       }
     }
 
+    this.cleanStyleAttribute();
     super.update(props);
   }
 
