@@ -1,0 +1,17 @@
+sudo: false
+dist: xenial
+language: node_js
+node_js: lts/*
+
+addons:
+  firefox: latest
+  chrome: stable
+
+script:
+
+- npm run check:version &&
+  npm run lint &&
+  npm test;
+
+# after_success:
+  # - "cat ${TRAVIS_BUILD_DIR}/coverage/lcov.info | coveralls"
