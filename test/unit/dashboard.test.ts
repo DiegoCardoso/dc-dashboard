@@ -6,7 +6,10 @@ describe('dc-dashboard', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      <dc-dashboard></dc-dashboard>
+      <dc-dashboard>
+        <div></div>
+        <div></div>
+      </dc-dashboard>
     `);
   });
 
@@ -89,6 +92,33 @@ describe('dc-dashboard', () => {
           requestAnimationFrame(() => {
             const rowHeight = getComputedStyle(element).gridAutoRows;
             expect(rowHeight).to.be.equal('200px');
+            done();
+          });
+        });
+      });
+    });
+
+    describe('gap', () => {
+      it('should be null by default', () => {
+        expect(element.gap).to.be.undefined;
+      });
+
+      it('should be able to define the gap between cells', done => {
+        element.gap = '20px';
+        requestAnimationFrame(() => {
+          const gap = getComputedStyle(element).rowGap;
+          expect(gap).to.be.equal('20px');
+          done();
+        });
+      });
+
+      it('should be able to reset the gap between cells', done => {
+        element.gap = '1em';
+        requestAnimationFrame(() => {
+          element.gap = null;
+          requestAnimationFrame(() => {
+            const gap = getComputedStyle(element).rowGap;
+            expect(gap).to.be.equal('0px');
             done();
           });
         });

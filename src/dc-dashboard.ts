@@ -20,20 +20,28 @@ class DcDashboard extends VaadinElement {
 
   static ROW_HEIGHT_CSS_PROP = '--dc-dashboard-row-height';
 
+  static GAP_CSS_PROP = '--dc-dashboard-gap';
+
   @property({ type: Number })
   columns: number | undefined | null;
 
   @property({ type: String })
   rowHeight: string | undefined | null;
 
+  @property({ type: String })
+  gap: string | undefined | null;
+
   static get styles() {
     return css`
       :host {
         --dc-dashboard-columns: 4;
         --dc-dashboard-row-height: 200px;
+        --dc-dashboard-gap: 0;
         display: grid;
         grid-template-columns: repeat(var(--dc-dashboard-columns, 4), 1fr);
         grid-auto-rows: var(--dc-dashboard-row-height, 200px);
+        grid-gap: var(--dc-dashboard-gap, 0);
+        gap: var(--dc-dashboard-gap, 0);
       }
 
       :host([hidden]) {
@@ -50,26 +58,30 @@ class DcDashboard extends VaadinElement {
 
   protected update(props: PropertyValues) {
     if (props.has('columns')) {
-      if (this.columns) {
-        this.style.setProperty(DcDashboard.COLUMN_CSS_PROP, `${this.columns}`);
-      } else {
-        this.style.removeProperty(DcDashboard.COLUMN_CSS_PROP);
-      }
+      this.__defineCssProperty(DcDashboard.COLUMN_CSS_PROP, this.columns);
     }
 
     if (props.has('rowHeight')) {
-      if (this.rowHeight) {
-        this.style.setProperty(DcDashboard.ROW_HEIGHT_CSS_PROP, this.rowHeight);
-      } else {
-        this.style.removeProperty(DcDashboard.ROW_HEIGHT_CSS_PROP);
-      }
+      this.__defineCssProperty(DcDashboard.ROW_HEIGHT_CSS_PROP, this.rowHeight);
     }
 
-    this.cleanStyleAttribute();
+    if (props.has('gap')) {
+      this.__defineCssProperty(DcDashboard.GAP_CSS_PROP, this.gap);
+    }
+
+    this.__cleanStyleAttribute();
     super.update(props);
   }
 
-  cleanStyleAttribute() {
+  __defineCssProperty(prop: string, value: unknown) {
+    if (value) {
+      this.style.setProperty(prop, `${value}`);
+    } else {
+      this.style.removeProperty(prop);
+    }
+  }
+
+  __cleanStyleAttribute() {
     if (this.getAttribute('style') === '') {
       this.removeAttribute('style');
     }
