@@ -19,7 +19,9 @@ class DcDashboard extends VaadinElement {
   static get styles() {
     return css`
       :host {
-        display: inline-block;
+        display: grid;
+        grid-template-columns: repeat(var(--dc-dashboard-columns, 4), 1fr);
+        grid-auto-rows: var(--dc-dashboard-row-height, 200px);
       }
 
       :host([hidden]) {
@@ -30,7 +32,6 @@ class DcDashboard extends VaadinElement {
 
   render() {
     return html`
-      This is my element!
       <slot></slot>
     `;
   }

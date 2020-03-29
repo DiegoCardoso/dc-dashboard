@@ -3,7 +3,7 @@
 &lt;dc-dashboard&gt; is a Web Component providing a dashboard and widgets based
 on CSS Grid.
 
-[![Build Status](https://travis-ci.org/diegocardoso/dc-dashboard.svg?branch=master)](https://travis-ci.org/diegocardoso/dc-dashboard)
+![Node.js CI](https://github.com/DiegoCardoso/dc-dashboard/workflows/Node.js%20CI/badge.svg)
 
 
 

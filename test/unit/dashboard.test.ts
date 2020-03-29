@@ -30,4 +30,15 @@ describe('dc-dashboard', () => {
       expect(customElements.get(tagName).version).to.match(/^(\d+\.)?(\d+\.)?(\d+)(-(alpha|beta)\d+)?$/);
     });
   });
+
+  describe('basic functionality', () => {
+    it('should define a grid context', () => {
+      expect(getComputedStyle(element).display).to.be.equal('grid');
+    });
+
+    it('should have 4 columns by default', () => {
+      const columns = getComputedStyle(element).gridTemplateColumns;
+      expect(columns.split(' ').length).to.be.equal(4);
+    });
+  });
 });
