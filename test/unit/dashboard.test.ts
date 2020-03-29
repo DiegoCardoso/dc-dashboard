@@ -67,5 +67,32 @@ describe('dc-dashboard', () => {
         });
       });
     });
+
+    describe('rowHeight', () => {
+      it('should be null by default', () => {
+        expect(element.rowHeight).to.be.undefined;
+      });
+
+      it('should be able to define the height of the rows', done => {
+        element.rowHeight = '120px';
+        requestAnimationFrame(() => {
+          const rowHeight = getComputedStyle(element).gridAutoRows;
+          expect(rowHeight).to.be.equal('120px');
+          done();
+        });
+      });
+
+      it('should be able to reset the height of the rows', done => {
+        element.rowHeight = '120px';
+        requestAnimationFrame(() => {
+          element.rowHeight = null;
+          requestAnimationFrame(() => {
+            const rowHeight = getComputedStyle(element).gridAutoRows;
+            expect(rowHeight).to.be.equal('200px');
+            done();
+          });
+        });
+      });
+    });
   });
 });
