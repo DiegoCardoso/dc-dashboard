@@ -41,4 +41,31 @@ describe('dc-dashboard', () => {
       expect(columns.split(' ').length).to.be.equal(4);
     });
   });
+
+  describe('columns', () => {
+    it('should be null by default', () => {
+      expect(element.columns).to.be.undefined;
+    });
+
+    it('should be able to define the number of cols', done => {
+      element.columns = 8;
+      requestAnimationFrame(() => {
+        const numberOfCols = getComputedStyle(element).gridTemplateColumns.split(' ').length;
+        expect(numberOfCols).to.be.equal(8);
+        done();
+      });
+    });
+
+    it('should be able to reset the number of cols', done => {
+      element.columns = 8;
+      requestAnimationFrame(() => {
+        element.columns = null;
+        requestAnimationFrame(() => {
+          const numberOfCols = getComputedStyle(element).gridTemplateColumns.split(' ').length;
+          expect(numberOfCols).to.be.equal(4);
+          done();
+        });
+      });
+    });
+  });
 });
