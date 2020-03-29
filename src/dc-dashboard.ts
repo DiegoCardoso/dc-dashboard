@@ -1,4 +1,4 @@
-import { html, css, customElement } from 'lit-element';
+import { html, css, customElement, property, PropertyValues } from 'lit-element';
 import { VaadinElement } from '@vaadin/element-base/vaadin-element.js';
 
 /**
@@ -16,9 +16,16 @@ class DcDashboard extends VaadinElement {
     return '0.1.0';
   }
 
+  static COLUMN_CSS_ATTRIBUTE = '--dc-dashboard-columns';
+
+  @property({ type: Number })
+  columns: number | undefined | null;
+
   static get styles() {
     return css`
       :host {
+        --dc-dashboard-columns: 4;
+        -dc-dashboard-row-height: 200px;
         display: grid;
         grid-template-columns: repeat(var(--dc-dashboard-columns, 4), 1fr);
         grid-auto-rows: var(--dc-dashboard-row-height, 200px);
@@ -34,6 +41,25 @@ class DcDashboard extends VaadinElement {
     return html`
       <slot></slot>
     `;
+  }
+
+  protected update(props: PropertyValues) {
+    if (props.has('columns')) {
+      if (this.columns) {
+        this.style.setProperty(DcDashboard.COLUMN_CSS_ATTRIBUTE, `${this.columns}`);
+      } else {
+        this.style.removeProperty(DcDashboard.COLUMN_CSS_ATTRIBUTE);
+      }
+    }
+
+    this.cleanStyleAttribute();
+    super.update(props);
+  }
+
+  cleanStyleAttribute() {
+    if (this.getAttribute('style') === '') {
+      this.removeAttribute('style');
+    }
   }
 }
 
