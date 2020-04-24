@@ -125,7 +125,7 @@ class DcDashboard extends VaadinElement {
     this.__setCellCssProps(parent, cell);
     cell.setAttribute('slot', slotName);
 
-    this.shadowRoot.appendChild(parent);
+    this.shadowRoot && this.shadowRoot.appendChild(parent);
     this.__cells.set(cell, parent);
   }
 
