@@ -6,6 +6,7 @@ import { waitAnimationFrame } from './helpers';
 describe('dc-dashboard-cell', () => {
   let element: DcDashboard;
   let firstCell: DcDashboardCell;
+  let firstCellParent: HTMLElement;
 
   beforeEach(async () => {
     element = await fixture(html`
@@ -15,47 +16,48 @@ describe('dc-dashboard-cell', () => {
       </dc-dashboard>
     `);
     firstCell = element.querySelector('dc-dashboard-cell') as DcDashboardCell;
+    firstCellParent = firstCell.assignedSlot?.parentNode as HTMLElement;
   });
 
   describe('cell properties', () => {
     it('should have the right gridColumn value set by "col"', () => {
-      expect(getComputedStyle(firstCell).gridColumnStart).to.be.equal('2');
+      expect(getComputedStyle(firstCellParent).gridColumnStart).to.be.equal('2');
     });
 
     it('should be able to change col value', async () => {
       firstCell.col = 3;
       await waitAnimationFrame();
-      expect(getComputedStyle(firstCell).gridColumnStart).to.be.equal('3');
+      expect(getComputedStyle(firstCellParent).gridColumnStart).to.be.equal('3');
     });
 
     it('should have the right gridRow value set by "row"', () => {
-      expect(getComputedStyle(firstCell).gridRowStart).to.be.equal('2');
+      expect(getComputedStyle(firstCellParent).gridRowStart).to.be.equal('2');
     });
 
     it('should be able to change col value', async () => {
       firstCell.row = 3;
       await waitAnimationFrame();
-      expect(getComputedStyle(firstCell).gridRowStart).to.be.equal('3');
+      expect(getComputedStyle(firstCellParent).gridRowStart).to.be.equal('3');
     });
 
     it('should have the right gridColumn value set by "colSpan"', () => {
-      expect(getComputedStyle(firstCell).gridColumnEnd).to.be.equal('span 2');
+      expect(getComputedStyle(firstCellParent).gridColumnEnd).to.be.equal('span 2');
     });
 
     it('should be able to change colSpan value', async () => {
       firstCell.colSpan = 3;
       await waitAnimationFrame();
-      expect(getComputedStyle(firstCell).gridColumnEnd).to.be.equal('span 3');
+      expect(getComputedStyle(firstCellParent).gridColumnEnd).to.be.equal('span 3');
     });
 
     it('should have the right gridRow value set by "rowSpan"', () => {
-      expect(getComputedStyle(firstCell).gridRowEnd).to.be.equal('span 2');
+      expect(getComputedStyle(firstCellParent).gridRowEnd).to.be.equal('span 2');
     });
 
     it('should be able to change rowSpan value', async () => {
       firstCell.rowSpan = 3;
       await waitAnimationFrame();
-      expect(getComputedStyle(firstCell).gridRowEnd).to.be.equal('span 3');
+      expect(getComputedStyle(firstCellParent).gridRowEnd).to.be.equal('span 3');
     });
   });
 
@@ -71,11 +73,13 @@ describe('dc-dashboard-cell', () => {
 
       await waitAnimationFrame();
 
-      const computedStyle = getComputedStyle(newCell);
-      expect(computedStyle.gridColumnStart).to.be.equal('1');
-      expect(computedStyle.gridColumnEnd).to.be.equal('span 3');
-      expect(computedStyle.gridRowStart).to.be.equal('3');
-      expect(computedStyle.gridRowEnd).to.be.equal('span 3');
+      const { gridColumnStart, gridColumnEnd, gridRowStart, gridRowEnd } = getComputedStyle(
+        newCell.assignedSlot?.parentElement as HTMLElement
+      );
+      expect(gridColumnStart).to.be.equal('1');
+      expect(gridColumnEnd).to.be.equal('span 3');
+      expect(gridRowStart).to.be.equal('3');
+      expect(gridRowEnd).to.be.equal('span 3');
     });
   });
 });
