@@ -1,5 +1,6 @@
 import { expect, fixture, html } from '@vaadin/vaadin-component-dev-dependencies/testing.js';
 import { DcDashboard } from '../../src/dc-dashboard';
+import { waitAnimationFrame } from './helpers';
 
 describe('dc-dashboard', () => {
   let element: DcDashboard;
@@ -122,6 +123,25 @@ describe('dc-dashboard', () => {
             done();
           });
         });
+      });
+    });
+
+    describe('style', () => {
+      it('should clear style if all properties are unset', async () => {
+        element.gap = '1em';
+        element.columns = 5;
+        element.rowHeight = '120px';
+
+        await waitAnimationFrame();
+        expect(element.hasAttribute('style')).to.be.ok;
+
+        element.gap = null;
+        element.columns = null;
+        element.rowHeight = null;
+
+        await waitAnimationFrame();
+
+        expect(element.hasAttribute('style')).to.be.not.ok;
       });
     });
   });

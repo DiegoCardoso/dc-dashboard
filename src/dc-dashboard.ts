@@ -1,5 +1,6 @@
-import { html, css, customElement, property, PropertyValues } from 'lit-element';
 import { VaadinElement } from '@vaadin/element-base/vaadin-element.js';
+import { css, customElement, html, property, PropertyValues } from 'lit-element';
+import { DcDashboardCell } from './dc-dashboard-cell';
 
 /**
  * `<dc-dashboard>` is a Web Component.
@@ -73,12 +74,68 @@ class DcDashboard extends VaadinElement {
     super.update(props);
   }
 
-  __defineCssProperty(prop: string, value: unknown) {
+  private __childMutationObserver: MutationObserver | undefined;
+
+  private __childAttributesMutationObserver: MutationObserver | undefined;
+
+  __childMutationCb(mutationList: MutationRecord[]): void {
+    const mutations: Node[] = mutationList.flatMap((record: MutationRecord) => Array.from(record.addedNodes));
+    this.__filterDashboardCells(mutations).forEach(node => {
+      this.__setCellCssProps(node);
+    });
+  }
+
+  private __filterDashboardCells(nodes: Node[]): DcDashboardCell[] {
+    return nodes.filter(this.__isDashboardCell) as DcDashboardCell[];
+  }
+
+  private __isDashboardCell(value: Node) {
+    return value instanceof DcDashboardCell;
+  }
+
+  __childAttributesMutationCb(mutationList: MutationRecord[]): void {
+    this.__filterDashboardCells(mutationList.map(mutation => mutation.target)).forEach((node: DcDashboardCell) => {
+      this.__setCellCssProps(node);
+    });
+  }
+
+  protected firstUpdated(changedProperties: any) {
+    super.firstUpdated(changedProperties);
+
+    this.__childMutationObserver = new MutationObserver(this.__childMutationCb.bind(this));
+    this.__childMutationObserver.observe(this, { childList: true });
+
+    this.__childAttributesMutationObserver = new MutationObserver(this.__childAttributesMutationCb.bind(this));
+    this.__childAttributesMutationObserver.observe(this, { attributes: true, subtree: true });
+
+    this.__filterDashboardCells(Array.from(this.children)).forEach(node => this.__setCellCssProps(node));
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.__childMutationObserver && this.__childMutationObserver.disconnect();
+  }
+
+  private __setCellCssProps(node: DcDashboardCell): void {
+    const { row, col, rowSpan, colSpan } = node;
+    this.__defineCssPropertyForElement(node, 'grid-row', `${row || 'auto'} / ${rowSpan ? `span ${rowSpan}` : 'auto'}`);
+    this.__defineCssPropertyForElement(
+      node,
+      'grid-column',
+      `${col || 'auto'} / ${colSpan ? `span ${colSpan}` : 'auto'}`
+    );
+  }
+
+  private __defineCssPropertyForElement(el: HTMLElement, prop: string, value: unknown) {
     if (value) {
-      this.style.setProperty(prop, `${value}`);
+      el.style.setProperty(prop, `${value}`);
     } else {
-      this.style.removeProperty(prop);
+      el.style.removeProperty(prop);
     }
+  }
+
+  private __defineCssProperty(prop: string, value: unknown): void {
+    this.__defineCssPropertyForElement(this, prop, value);
   }
 
   __cleanStyleAttribute() {

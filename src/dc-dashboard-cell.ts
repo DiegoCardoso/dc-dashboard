@@ -1,4 +1,4 @@
-import { customElement, html, property } from 'lit-element';
+import { customElement, html, property, css } from 'lit-element';
 import { VaadinElement } from '@vaadin/element-base';
 
 /**
@@ -12,17 +12,34 @@ class DcDashboardCell extends VaadinElement {
     return 'dc-dashboard-cell';
   }
 
-  @property({ type: Number })
+  @property({ type: Number, reflect: true })
   row: number | null | undefined;
 
-  @property({ type: Number })
+  @property({ type: Number, reflect: true })
   col: number | null | undefined;
 
-  @property({ type: Number })
+  @property({ type: Number, reflect: true })
   rowSpan: number | null | undefined;
 
-  @property({ type: Number })
+  @property({ type: Number, reflect: true })
   colSpan: number | null | undefined;
+
+  static get styles() {
+    return css`
+      :host {
+        display: block;
+      }
+
+      :host([hidden]) {
+        display: none !important;
+      }
+
+      ::slotted(*) {
+        width: 100%;
+        height: 100%;
+      }
+    `;
+  }
 
   render() {
     return html`
