@@ -79,36 +79,36 @@ class DcDashboard extends VaadinElement {
   private __childAttributesMutationObserver: MutationObserver | undefined;
 
   __childMutationCb(mutationList: MutationRecord[]): void {
-    const mutation = mutationList.pop();
-    if (mutation && mutation.addedNodes) {
-      mutation.addedNodes.forEach(node => {
-        if (node instanceof DcDashboardCell) {
-          this.__setCellCssProps(node);
-        }
-      });
-    }
+    const mutations: Node[] = mutationList.flatMap((record: MutationRecord) => Array.from(record.addedNodes));
+    this.__filterDashboardCells(mutations).forEach(node => {
+      this.__setCellCssProps(node);
+    });
+  }
+
+  private __filterDashboardCells(nodes: Node[]): DcDashboardCell[] {
+    return nodes.filter(this.__isDashboardCell) as DcDashboardCell[];
+  }
+
+  private __isDashboardCell(value: Node) {
+    return value instanceof DcDashboardCell;
   }
 
   __childAttributesMutationCb(mutationList: MutationRecord[]): void {
-    mutationList
-      .filter(mutation => mutation.target instanceof DcDashboardCell)
-      .map(mutation => mutation.target)
-      .forEach((node: any) => {
-        this.__setCellCssProps(node);
-      });
+    this.__filterDashboardCells(mutationList.map(mutation => mutation.target)).forEach((node: DcDashboardCell) => {
+      this.__setCellCssProps(node);
+    });
   }
 
   protected firstUpdated(changedProperties: any) {
+    super.firstUpdated(changedProperties);
+
     this.__childMutationObserver = new MutationObserver(this.__childMutationCb.bind(this));
     this.__childMutationObserver.observe(this, { childList: true });
-    super.firstUpdated(changedProperties);
 
     this.__childAttributesMutationObserver = new MutationObserver(this.__childAttributesMutationCb.bind(this));
     this.__childAttributesMutationObserver.observe(this, { attributes: true, subtree: true });
 
-    Array.from(this.children)
-      .filter(child => child instanceof DcDashboardCell)
-      .forEach(node => this.__setCellCssProps(node as DcDashboardCell));
+    this.__filterDashboardCells(Array.from(this.children)).forEach(node => this.__setCellCssProps(node));
   }
 
   disconnectedCallback() {
