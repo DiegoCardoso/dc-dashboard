@@ -28,6 +28,8 @@ class DcDashboardCell extends VaadinElement {
     return css`
       :host {
         display: block;
+        height: 100%;
+        width: 100%;
       }
 
       :host([hidden]) {
