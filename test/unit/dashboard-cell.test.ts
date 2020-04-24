@@ -72,8 +72,10 @@ describe('dc-dashboard-cell', () => {
       await waitAnimationFrame();
 
       const computedStyle = getComputedStyle(newCell);
-      expect(computedStyle.gridColumn).to.be.equal('1 / span 3');
-      expect(computedStyle.gridRow).to.be.equal('3 / span 3');
+      expect(computedStyle.gridColumnStart).to.be.equal('1');
+      expect(computedStyle.gridColumnEnd).to.be.equal('span 3');
+      expect(computedStyle.gridRowStart).to.be.equal('3');
+      expect(computedStyle.gridRowEnd).to.be.equal('span 3');
     });
   });
 });
