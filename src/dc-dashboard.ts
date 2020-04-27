@@ -23,6 +23,8 @@ class DcDashboard extends VaadinElement {
 
   static GAP_CSS_PROP = '--dc-dashboard-gap';
 
+  private __cellId = 0;
+
   private __cells: Map<DcDashboardCell, HTMLElement> = new Map();
 
   @property({ type: Number })
@@ -98,10 +100,21 @@ class DcDashboard extends VaadinElement {
   }
 
   __childMutationCb(mutationList: MutationRecord[]): void {
-    const mutations: Node[] = mutationList.flatMap((record: MutationRecord) => Array.from(record.addedNodes));
-    this.__filterDashboardCells(mutations).forEach(node => {
+    const addedNodes: Node[] = mutationList.flatMap((record: MutationRecord) => Array.from(record.addedNodes));
+    const removedNodes: Node[] = mutationList.flatMap((record: MutationRecord) => Array.from(record.removedNodes));
+    this.__filterDashboardCells(addedNodes).forEach(node => {
       this.__addCellToSlot(node);
     });
+
+    this.__filterDashboardCells(removedNodes).forEach(node => {
+      this.__cleanupCell(node);
+    });
+  }
+
+  private __cleanupCell(node: DcDashboardCell) {
+    const cellParent = this.__cells.get(node);
+    cellParent && cellParent.remove();
+    this.__cells.delete(node);
   }
 
   private __filterDashboardCells(nodes: Node[]): DcDashboardCell[] {
@@ -120,13 +133,14 @@ class DcDashboard extends VaadinElement {
   }
 
   private __addCellToSlot(cell: DcDashboardCell) {
-    const slotName = `cell-${this.__cells.size}`;
+    const slotName = `cell-${this.__cellId}`;
     const parent = this.__createSlotElement(slotName);
     this.__setCellCssProps(parent, cell);
     cell.setAttribute('slot', slotName);
 
     this.shadowRoot && this.shadowRoot.appendChild(parent);
     this.__cells.set(cell, parent);
+    this.__cellId += 1;
   }
 
   private __createSlotElement(slotName: string): HTMLDivElement {
