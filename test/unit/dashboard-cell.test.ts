@@ -81,5 +81,15 @@ describe('dc-dashboard-cell', () => {
       expect(gridRowStart).to.be.equal('3');
       expect(gridRowEnd).to.be.equal('span 3');
     });
+
+    it('should clean up internal structure on cell removal', async () => {
+      const root = element.shadowRoot as ShadowRoot;
+      const namedSlotsSize = root.querySelectorAll('slot[name]').length;
+      element.querySelector('dc-dashboard-cell')?.remove();
+
+      await waitAnimationFrame();
+
+      expect(root.querySelectorAll('slot[name]').length).to.be.eq(namedSlotsSize - 1);
+    });
   });
 });
